@@ -14,7 +14,7 @@ def _prices(dias: int = 6, extra_futuro: bool = False) -> pd.DataFrame:
     base = pd.Timestamp("2026-10-09")  # sexta
     cat = [  # product_id, nome, tipo, raridade, preço USD
         (1, "Chase", "carta", "Special Illustration Rare", 100.0),
-        (2, "Media", "carta", "Ultra Rare", 20.0),
+        (2, "Media", "carta", "Ultra Rare", 8.0),
         (3, "Barata", "carta", "Common", 0.5),
         (4, "X Booster Box", "selado", None, 130.0),
         (5, "X Booster Box Case", "selado", None, 780.0),
@@ -91,7 +91,7 @@ def test_dolar_compra_na_venda_e_liquida_na_compra():
 
 
 def test_preco_carregado_e_marcado_e_usa_ultimo_preco_observado():
-    # Só o produto 2 (Ultra Rare, US$20) entra na carteira "propria" e ele não tem preço em 11/10.
+    # Só o produto 2 (Ultra Rare, US$8) entra na carteira "propria" e ele não tem preço em 11/10.
     curvas, comp = simulate(_prices(), _cambio(), GID, PortfolioConfig())
     propria = curvas[curvas["carteira"] == "propria"].set_index("data")
     assert propria.loc[date(2026, 10, 11), "itens_preco_carregado"] == 1
@@ -99,7 +99,7 @@ def test_preco_carregado_e_marcado_e_usa_ultimo_preco_observado():
     unidades = comp[(comp["carteira"] == "propria") & (comp["product_id"] == 2)]["unidades"].iloc[0]
     assert unidades > 0
     # valor de 11/10 = último preço observado (10/10), não um preço inventado nem zero
-    p10 = 20.0 * 1.01
+    p10 = 8.0 * 1.01
     esperado_itens = unidades * p10 * (1 - 0.15) * 5.0
     caixa = comp[(comp["carteira"] == "propria")]["caixa_inicial_brl"].iloc[0]
     cdi_acum = 1.0  # sáb e dom: sem juros
@@ -131,3 +131,37 @@ def test_decomposicao_da_variacao_em_reais():
     assert r["efeito_cruzado"] == pytest.approx(0.005)
     assert r["var_brl"] == pytest.approx(0.155)
     assert (1 + r["efeito_carta"]) * (1 + r["efeito_cambio"]) - 1 == pytest.approx(r["var_brl"])
+
+
+def test_selado_cai_para_o_que_cabe_quando_a_box_passa_do_orcamento():
+    d0 = _dia0(_prices()).copy()
+    d0.loc[d0["product_id"] == 4, "market_price"] = 302.69  # box: R$ 1.543 > R$ 1.000
+    etb = d0[d0["product_id"] == 4].iloc[0].copy()
+    etb["product_id"], etb["nome"], etb["market_price"] = 7, "X Elite Trainer Box", 55.0
+    d0 = pd.concat([d0, etb.to_frame().T], ignore_index=True)
+    d0["market_price"] = d0["market_price"].astype(float)
+    escolhido = escolher_selado(d0, 5.1, 1000.0)
+    assert escolhido["nome"] == "X Elite Trainer Box"          # o mais caro que cabe
+    pos, caixa = compor(d0, 5.1, PortfolioConfig())
+    assert pos["selado"][0]["unidades"] == 3                   # 55*5,1 = R$280,5 -> 3 unidades
+    assert caixa["selado"] == pytest.approx(1000 - 3 * 55 * 5.1)
+
+
+def test_selado_sem_nada_que_caiba_mantem_a_escolha_original():
+    d0 = _dia0(_prices()).copy()
+    d0.loc[d0["tipo_produto"] == "selado", "market_price"] = 500.0
+    assert escolher_selado(d0, 5.1, 1000.0)["nome"] == "X Booster Box"
+    pos, caixa = compor(d0, 5.1, PortfolioConfig())
+    assert pos["selado"][0]["unidades"] == 0 and caixa["selado"] == pytest.approx(1000.0)
+
+
+def test_propria_so_inclui_cartas_cuja_unidade_cabe_no_orcamento():
+    d0 = _dia0(_prices()).copy()
+    caro = d0[d0["product_id"] == 2].iloc[0].copy()  # US$ 8 -> R$ 40,8: cabe em R$ 50
+    caro["product_id"], caro["nome"], caro["market_price"] = 8, "Carta Cara Demais", 30.0  # R$ 153: não cabe
+    d0 = pd.concat([d0, caro.to_frame().T], ignore_index=True)
+    d0["market_price"] = d0["market_price"].astype(float)
+    pos, _ = compor(d0, 5.1, PortfolioConfig())
+    ids = [x["product_id"] for x in pos["propria"]]
+    assert 2 in ids and 8 not in ids
+    assert all(x["unidades"] >= 1 for x in pos["propria"])

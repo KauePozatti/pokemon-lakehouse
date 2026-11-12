@@ -81,7 +81,7 @@ def parse_prices(raw: bytes, d: date, group_id: int, chave_raw: str) -> list[dic
 
 def parse_ptax(raw: bytes, d: date, chave_raw: str) -> list[dict]:
     """Só o boletim de Fechamento. Dia sem boletim (fim de semana/feriado) devolve []."""
-    boletins = [b for b in json.loads(raw).get("value", []) if b.get("tipoBoletim") == "Fechamento"]
+    boletins = [b for b in json.loads(raw).get("value", []) if str(b.get("tipoBoletim", "")).startswith("Fechamento")]
     if not boletins:
         return []
     b = max(boletins, key=lambda x: x["dataHoraCotacao"])

@@ -42,16 +42,31 @@ def _unidades(orcamento_brl: float, preco_usd: float, ptax_venda: float) -> tupl
     return n, n * unit
 
 
-def escolher_selado(d0: pd.DataFrame) -> pd.Series | None:
-    """Booster box da coleção (sem 'case'); sem ele, o selado de maior preço com preço."""
+def escolher_selado(d0: pd.DataFrame, ptax_venda: float | None = None, orcamento: float | None = None) -> pd.Series | None:
+    """Booster box da coleção (sem 'case'); sem ele, o selado de maior preço com preço.
+
+    Revisão (ADR-006): se a escolha acima NÃO CABE no orçamento (uma unidade custa mais que
+    `orcamento` reais), usa o selado de maior preço cuja unidade caiba. Se nenhum couber,
+    mantém a escolha original (0 unidades, tudo em caixa). Sem `ptax_venda`/`orcamento`,
+    só aplica a regra original.
+    """
     s = d0[(d0["tipo_produto"] == "selado") & d0["market_price"].notna()]
     if s.empty:
         return None
     nome = s["nome"].str.lower()
     box = s[nome.str.contains("booster box") & ~nome.str.contains("case")]
     if not box.empty:
-        return box.assign(_n=box["nome"].str.len()).sort_values(["_n", "market_price"], ascending=[True, False]).iloc[0]
-    return s.sort_values("market_price", ascending=False).iloc[0]
+        escolhido = box.assign(_n=box["nome"].str.len()).sort_values(["_n", "market_price"], ascending=[True, False]).iloc[0]
+    else:
+        escolhido = s.sort_values("market_price", ascending=False).iloc[0]
+    if ptax_venda is None or orcamento is None:
+        return escolhido
+    if escolhido["market_price"] * ptax_venda <= orcamento:
+        return escolhido
+    cabem = s[s["market_price"] * ptax_venda <= orcamento]
+    if cabem.empty:
+        return escolhido
+    return cabem.sort_values(["market_price", "product_id"], ascending=[False, True]).iloc[0]
 
 
 def _top_cartas(d0: pd.DataFrame) -> pd.DataFrame:
@@ -76,7 +91,7 @@ def compor(d0: pd.DataFrame, ptax_venda: float, cfg: PortfolioConfig) -> tuple[d
             )
         return gasto
 
-    sel = escolher_selado(d0)
+    sel = escolher_selado(d0, ptax_venda, cfg.capital)
     gasto = comprar("selado", sel.to_frame().T if sel is not None else d0.iloc[0:0], cfg.capital)
     caixa["selado"] = cfg.capital - gasto
 
@@ -84,13 +99,16 @@ def compor(d0: pd.DataFrame, ptax_venda: float, cfg: PortfolioConfig) -> tuple[d
     gasto = comprar("cesta_raras", top, cfg.brl_por_carta)
     caixa["cesta_raras"] = cfg.capital - gasto
 
+    # propria (ADR-006, revisado): orçamento fixo por carta; só entram cartas cuja unidade CABE nele.
+    orcamento_carta = cfg.capital / cfg.propria_n
     c = _top_cartas(d0)
     c = c[
         c["raridade"].notna()
         & ~c["raridade"].isin(RARIDADES_BAIXAS)
         & c["market_price"].between(cfg.propria_min_usd, cfg.propria_max_usd)
+        & ((c["market_price"] * ptax_venda) <= orcamento_carta)
     ].head(cfg.propria_n)
-    gasto = comprar("propria", c, cfg.capital / len(c) if len(c) else 0.0)
+    gasto = comprar("propria", c, orcamento_carta)
     caixa["propria"] = cfg.capital - gasto
     return pos, caixa
 
