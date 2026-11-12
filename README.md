@@ -6,10 +6,10 @@ da turma (RustFS/MinIO, bucket `tcg`), monta um lakehouse com **DuckDB + Parquet
 e um **dashboard em Streamlit** que responde a cinco perguntas de investimento em reais (PTAX do dia) e ao
 desafio da carteira de R$ 1.000 contra dólar e CDI.
 
-- **Aluno:** _<seu nome>_
-- **Coleção escolhida:** _<sigla e nome, ex.: DRI — SV10: Destined Rivals (group_id 24269)>_
-- **Primeiro dia de coleta:** _<dd/mm/aaaa>_
-- **Dias sem coleta (lacunas):** _<liste aqui, com o motivo; deixe vazio se não houve>_
+- **Aluno:** Kauê Douglas
+- **Coleção escolhida:** ASC — ME: Ascended Heroes (group_id 24541)
+- **Primeiro dia de coleta:** 12/11/2026
+- **Dias sem coleta (lacunas):** nenhum até o momento
 
 ## Arquitetura
 
