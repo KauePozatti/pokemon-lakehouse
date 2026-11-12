@@ -1,15 +1,10 @@
 # Cartas Pokémon como ativo de coleção
 
-Projeto individual do módulo **Data Collection and Storage** (MBA em Engenharia de Dados, Mackenzie).
+Projeto do módulo **Data Collection and Storage** (MBA em Engenharia de Dados, Mackenzie).
 Pipeline diário que coleta preços de cartas e produtos selados do TCGplayer (via TCGCSV), grava no data lake
 da turma (RustFS/MinIO, bucket `tcg`), monta um lakehouse com **DuckDB + Parquet**, um **modelo dimensional**
 e um **dashboard em Streamlit** que responde a cinco perguntas de investimento em reais (PTAX do dia) e ao
 desafio da carteira de R$ 1.000 contra dólar e CDI.
-
-- **Aluno:** _<seu nome>_
-- **Coleção escolhida:** _<sigla e nome, ex.: DRI — SV10: Destined Rivals (group_id 24269)>_
-- **Primeiro dia de coleta:** _<dd/mm/aaaa>_
-- **Dias sem coleta (lacunas):** _<liste aqui, com o motivo; deixe vazio se não houve>_
 
 ## Arquitetura
 
@@ -32,7 +27,7 @@ CDI  (BCB SGS 12)         ─┘                                      │       
 Modelo dimensional: `fato_preco_diario`, `fato_cambio_diario`, `dim_produto`, `dim_colecao`, `dim_data`, `dim_acabamento`
 (ver [ADR-004](docs/adr/ADR-004-modelo-dimensional.md)).
 
-## Primeiros passos (faça HOJE: a série só começa no primeiro dia de coleta)
+## Primeiros passos
 
 ```bash
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
@@ -65,7 +60,7 @@ cp .env.example .env                                    # preencha com a chave e
 | `streamlit run dashboard/app.py` | Dashboard |
 | `pytest -q` | Testes de unidade e de integração |
 
-Para ver o dashboard antes de existir histórico real:
+Para ver o dashboard antes:
 
 ```bash
 python -m pokelake demo
