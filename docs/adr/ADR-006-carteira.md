@@ -21,3 +21,8 @@
 **Motivo (defeito funcional, não desempenho).** Num teste local, com 1 dia de dados da coleção SSP (Surging Sparks), a booster box (US$ 302,69, cerca de R$ 1.670) e as dez cartas mais caras da `cesta_raras` (a décima, US$ 20,80, cerca de R$ 115, já passa de R$ 100) não cabiam no orçamento: as carteiras `selado` e `cesta_raras` terminaram 100% em caixa, e a `propria` incluía cartas que não cabiam em R$ 50 (0 unidades). Nenhum resultado foi gravado no data lake antes desta revisão; o teste foi apenas local.
 
 **Mudanças:** `selado` e `propria`, conforme a tabela acima. **A `cesta_raras` não foi alterada**: segue o enunciado e, na SSP, fica em caixa. Isso é tratado como limitação a analisar no ATAM, não como erro a corrigir.
+
+
+## Revisão 2 (14/11/2026): Code Card nunca é selado
+
+Dados reais da ASC mostraram 5 Code Cards classificadas como selado (sem número de coleção). A classificação foi corrigida na silver (ADR-004, nota) e a escolha do selado passou a ignorar Code Card. Não altera a regra da carteira: apenas impede que um código digital seja candidato a "selado de maior preço".

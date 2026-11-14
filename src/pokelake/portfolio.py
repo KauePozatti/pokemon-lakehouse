@@ -51,6 +51,8 @@ def escolher_selado(d0: pd.DataFrame, ptax_venda: float | None = None, orcamento
     só aplica a regra original.
     """
     s = d0[(d0["tipo_produto"] == "selado") & d0["market_price"].notna()]
+    if "is_code_card" in s.columns:  # código digital nunca é selado, mesmo que a silver de um colega o classifique assim
+        s = s[~s["is_code_card"].astype(bool)]
     if s.empty:
         return None
     nome = s["nome"].str.lower()

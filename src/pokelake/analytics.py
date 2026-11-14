@@ -125,7 +125,7 @@ def q2_indices(df: pd.DataFrame, group_id: int, moeda: str = "BRL") -> pd.DataFr
     """Selado (média da cesta) x cartas Double Rare+ (soma da cesta), índice base 100."""
     col = _col(moeda)
     g = df[df["group_id"] == group_id]
-    selados = g[g["tipo_produto"] == "selado"]
+    selados = g[(g["tipo_produto"] == "selado") & (~g["is_code_card"].astype(bool))]
     cartas = canonical(g)
     cartas = cartas[cartas["raridade"].notna() & ~cartas["raridade"].isin(RARIDADES_BAIXAS)]
     s = _base100(indice_cesta(selados, col, agg="mean")).rename("indice_selados")

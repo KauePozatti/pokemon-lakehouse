@@ -73,3 +73,17 @@ def test_ptax_aceita_fechamento_ptax_do_bcb():
     r = parse_ptax(raw, date(2026, 11, 9), "k")
     assert len(r) == 1
     assert r[0]["boletim"] == "Fechamento" and r[0]["cotacao_venda"] == 5.5146 and r[0]["cotacao_compra"] == 5.5140
+
+
+def test_code_card_sem_numero_e_carta_nao_selado():
+    """Dado real da ASC (14/11/2026): Code Card não tem 'Number', mas não é selado."""
+    import json
+
+    raw = json.dumps({"results": [
+        {"productId": 10, "name": "Code Card - Ascended Heroes", "imageUrl": None, "url": None,
+         "extendedData": [{"name": "Rarity", "value": "Code Card"}]},
+        {"productId": 11, "name": "Ascended Heroes Booster Box", "imageUrl": None, "url": None, "extendedData": []},
+    ]}).encode()
+    rows = {r["product_id"]: r for r in parse_products(raw, 24541)}
+    assert rows[10]["tipo_produto"] == "carta" and rows[10]["raridade"] == "Code Card"
+    assert rows[11]["tipo_produto"] == "selado"

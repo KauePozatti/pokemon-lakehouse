@@ -42,14 +42,16 @@ def parse_products(raw: bytes, group_id: int) -> list[dict]:
     rows = []
     for p in json.loads(raw).get("results", []):
         numero = _ext(p, "Number")
+        rar = _ext(p, "Rarity")
         rows.append(
             {
                 "product_id": p.get("productId"),
                 "group_id": group_id,
                 "nome": p.get("name"),
                 # Carta tem número de coleção; produto sem número é selado (box, bundle, ETB...).
-                "tipo_produto": "carta" if numero else "selado",
-                "raridade": _ext(p, "Rarity"),
+                # Exceção (dado real da ASC): Code Card não tem número, mas é carta (código digital).
+                "tipo_produto": "carta" if (numero or rar == "Code Card") else "selado",
+                "raridade": rar,
                 "numero": numero,
                 "image_url": p.get("imageUrl"),
                 "url": p.get("url"),

@@ -165,3 +165,16 @@ def test_propria_so_inclui_cartas_cuja_unidade_cabe_no_orcamento():
     ids = [x["product_id"] for x in pos["propria"]]
     assert 2 in ids and 8 not in ids
     assert all(x["unidades"] >= 1 for x in pos["propria"])
+
+
+def test_selado_ignora_code_card_mesmo_classificado_como_selado():
+    base = _dia0(_prices())
+    modelo = base[base["product_id"] == 4].iloc[0]
+    cc = modelo.copy(); cc["product_id"], cc["nome"], cc["market_price"] = 9, "Code Card X", 500.0
+    cc["raridade"], cc["is_code_card"] = "Code Card", True
+    bundle = modelo.copy(); bundle["product_id"], bundle["nome"], bundle["market_price"] = 10, "X Booster Bundle", 28.0
+    bundle["raridade"], bundle["is_code_card"] = None, False
+    d0 = pd.concat([cc.to_frame().T, bundle.to_frame().T], ignore_index=True)
+    d0["market_price"] = d0["market_price"].astype(float)
+    d0["is_code_card"] = d0["is_code_card"].astype(bool)
+    assert escolher_selado(d0)["nome"] == "X Booster Bundle"
