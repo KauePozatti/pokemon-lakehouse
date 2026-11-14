@@ -58,3 +58,18 @@ def test_silver_e_reconstruivel_do_bruto(lake, settings):
     lake.put(k, b"corrompido")
     build_silver(lake, settings)  # um único comando reconstrói
     assert pq.read_table(io.BytesIO(lake.get(k))).to_pylist() == a
+
+
+def test_ptax_aceita_fechamento_ptax_do_bcb():
+    """Formato real do BCB (12/11/2026): tipoBoletim = 'Fechamento PTAX'."""
+    import json
+
+    raw = json.dumps({"value": [
+        {"paridadeCompra": 1.0, "paridadeVenda": 1.0, "cotacaoCompra": 5.5235, "cotacaoVenda": 5.5242,
+         "dataHoraCotacao": "2026-11-09 13:11:18.845204", "tipoBoletim": "Intermediário"},
+        {"paridadeCompra": 1.0, "paridadeVenda": 1.0, "cotacaoCompra": 5.5140, "cotacaoVenda": 5.5146,
+         "dataHoraCotacao": "2026-11-09 13:11:19.041465", "tipoBoletim": "Fechamento PTAX"},
+    ]}).encode()
+    r = parse_ptax(raw, date(2026, 11, 9), "k")
+    assert len(r) == 1
+    assert r[0]["boletim"] == "Fechamento" and r[0]["cotacao_venda"] == 5.5146 and r[0]["cotacao_compra"] == 5.5140

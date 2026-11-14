@@ -2,9 +2,11 @@ name: coleta-diaria
 
 on:
   schedule:
-    # 21:30 UTC = 18:30 em Brasília: depois da atualização do TCGCSV (~20h UTC) e da PTAX de fechamento (~13h BRT).
-    # O GitHub pode atrasar execuções agendadas em alguns minutos; a coleta é idempotente, então é seguro reexecutar.
-    - cron: "30 21 * * *"
+    # Duas janelas (ADR-008). O TCGCSV atualiza por volta de 20h05 UTC (17h05 em Brasília).
+    # O GitHub atrasa execuções agendadas em horas (observado: ~4h30), então a 1a janela fica logo após a
+    # atualização e a 2a serve de reserva. A coleta é idempotente: se a 1a deu certo, a 2a não grava nada.
+    - cron: "45 20 * * *"   # 17:45 BRT
+    - cron: "0 22 * * *"    # 19:00 BRT (reserva)
   workflow_dispatch:
     inputs:
       allow_stale:

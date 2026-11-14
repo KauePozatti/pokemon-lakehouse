@@ -9,3 +9,5 @@
 **Decomposição.** `(1 + r_brl) = (1 + r_usd)(1 + r_cambio)`; efeito cruzado = `r_usd · r_cambio`.
 
 **Teste.** `tests/test_gold_ptax.py`: sexta 09/10, fim de semana 10–11/10 e feriado 12/10 usam a PTAX de 09/10; 13/10 usa a própria; nenhuma linha com `data_ptax > data`.
+
+**Nota (12/11/2026, dado real).** A página da disciplina descreve o boletim como `Fechamento`, mas a API do BCB devolve `tipoBoletim = "Fechamento PTAX"`. O parser aceita qualquer valor que comece com `Fechamento` e grava `boletim = "Fechamento"` na silver, como pede o contrato. Sem isso, nenhum dia de câmbio entrava (`cambio_dias = 0`). Os horários também vêm com 5 ou 6 casas decimais de segundo; o fechamento usa 6.

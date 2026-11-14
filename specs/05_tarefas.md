@@ -12,7 +12,8 @@
 - [x] T10 Testes de unidade e integração; CI
 - [x] T11 Agendamento (GitHub Actions / Railway)
 - [x] T12 ADRs, ATAM, rastreabilidade
-- [ ] T13 **Aluno:** escolher a coleção, preencher o README e rodar a primeira coleta
-- [ ] T14 **Aluno:** ADR-006 da carteira `propria` commitado antes do primeiro cálculo
-- [ ] T15 **Aluno:** validar contra os dados reais (quarentena ≈ 0) e ajustar parsers se a fonte divergir
-- [ ] T16 **Aluno:** preencher `docs/atam.md` com observações reais da série; enviar o formulário de entrega
+- [x] T13 Coleção escolhida (ASC, group_id 24541), README preenchido e primeira coleta em 12/11/2026
+- [x] T14 ADR-006 commitado antes do primeiro cálculo da carteira no lake (original em 10/11; revisão 1 em 12/11, antes da 1a gravação)
+- [x] T15 Validado contra dados reais: quarentena 0; o BCB chama o boletim de "Fechamento PTAX" (parser corrigido, ver ADR-003)
+- [ ] T16 **Aluno:** completar `docs/atam.md` com os resultados da série até 12/12
+- [ ] T17 **Aluno:** enviar o formulário de entrega (nome + link do repositório) até 12/12, 23h59

@@ -63,7 +63,7 @@ def ptax_json(compra: float, venda: float, d: date) -> bytes:
     return json.dumps(
         {"value": [
             {"cotacaoCompra": compra - 0.01, "cotacaoVenda": venda - 0.01, "dataHoraCotacao": f"{d} 10:00:00.000", "tipoBoletim": "Abertura"},
-            {"cotacaoCompra": compra, "cotacaoVenda": venda, "dataHoraCotacao": f"{d} 13:09:02.713", "tipoBoletim": "Fechamento"},
+            {"cotacaoCompra": compra, "cotacaoVenda": venda, "dataHoraCotacao": f"{d} 13:09:02.713", "tipoBoletim": "Fechamento PTAX"},  # nome real no BCB
         ]}
     ).encode()
 

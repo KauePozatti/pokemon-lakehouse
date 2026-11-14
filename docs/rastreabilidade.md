@@ -14,3 +14,6 @@
 | RF-13/14 carteiras | ADR-006 | `portfolio.py`, `pipeline.build_portfolio` | `test_portfolio.py`, `test_carteiras_no_contrato_comum` |
 | RF-15 placar | ADR-006 | `portfolio.placar_turma`, `dashboard/app.py` | `test_carteiras_no_contrato_comum` |
 | RNF-04 reconstrução | ADR-007 | `pipeline.rebuild` | `test_silver_e_reconstruivel_do_bruto` |
+| RF-13 revisão (selado e própria cabem no orçamento) | ADR-006 (revisão 1) | `portfolio.escolher_selado`, `portfolio.compor` | `test_selado_cai_para_o_que_cabe_...`, `test_selado_sem_nada_que_caiba_...`, `test_propria_so_inclui_cartas_...` |
+| RF-06 boletim real do BCB | ADR-003 (nota) | `silver.parse_ptax` | `test_ptax_aceita_fechamento_ptax_do_bcb` |
+| RNF-01 coleta não perde dia por atraso do agendador | ADR-008 | `.github/workflows/coleta.yml` | (operacional: aba Actions) |

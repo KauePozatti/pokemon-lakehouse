@@ -1,6 +1,6 @@
 # Cartas Pokémon como ativo de coleção
 
-Projeto do módulo **Data Collection and Storage** (MBA em Engenharia de Dados, Mackenzie).
+Projeto individual do módulo **Data Collection and Storage** (MBA em Engenharia de Dados, Mackenzie).
 Pipeline diário que coleta preços de cartas e produtos selados do TCGplayer (via TCGCSV), grava no data lake
 da turma (RustFS/MinIO, bucket `tcg`), monta um lakehouse com **DuckDB + Parquet**, um **modelo dimensional**
 e um **dashboard em Streamlit** que responde a cinco perguntas de investimento em reais (PTAX do dia) e ao
