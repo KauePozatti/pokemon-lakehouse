@@ -42,7 +42,7 @@ CATEGORY_ID = 3  # Pokémon no TCGplayer
 class Settings:
     backend: str = "s3"  # "s3" | "local"
     bucket: str = "tcg"
-    endpoint_url: str = "https://s3.afonsolelis.tech"
+    endpoint_url: str = "https://lake-aulas-mackenzie.afonsolelis.tech"
     access_key: str = ""
     secret_key: str = ""
     region: str = "us-east-1"
@@ -69,7 +69,7 @@ def load_settings(**overrides) -> Settings:
     base = dict(
         backend=os.getenv("POKELAKE_BACKEND", "s3"),
         bucket=os.getenv("S3_BUCKET", "tcg"),
-        endpoint_url=os.getenv("S3_ENDPOINT_URL", "https://s3.afonsolelis.tech"),
+        endpoint_url=os.getenv("S3_ENDPOINT_URL", "https://lake-aulas-mackenzie.afonsolelis.tech"),
         access_key=os.getenv("S3_ACCESS_KEY", ""),
         secret_key=os.getenv("S3_SECRET_KEY", ""),
         region=os.getenv("S3_REGION", "us-east-1"),

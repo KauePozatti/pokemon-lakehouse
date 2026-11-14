@@ -40,13 +40,14 @@
 | R3 | `market_price` nulo para produtos ilíquidos | Nulo preservado; fora de médias/variações |
 | R4 | Série curta (~7 semanas) | Linguagem descritiva, sem previsão |
 | R5 | Cartas caras compram 0 unidades na `cesta_raras` | Documentado no ADR-006 |
+| R7 | Troca de infraestrutura da turma (endpoint e credenciais do lake) durante a coleta | Configuração só por variáveis/secrets, sem endpoint fixo no código; lacuna declarada no README |
 | R6 | Atraso do agendador empurra a coleta para depois da meia-noite | ADR-008 (duas janelas; a trava de frescor impede gravar dado do dia errado) |
 
 ## Resultados observados
 
 **Já verificado (dados reais, 12/11 a 14/11/2026)**
 
-- **Coleção e série.** ASC (group_id 24541). Primeira coleta em 12/11/2026. Execuções agendadas de 12/11 e 13/11 concluídas com sucesso (aba Actions). A execução agendada de 11/11 falhou, provavelmente porque os secrets ainda não estavam configurados (inferência: o log não foi analisado); a coleta da ASC só começou em 12/11, então não há lacuna na série.
+- **Coleção e série.** ASC (group_id 24541). Primeira coleta em 12/11/2026. Execuções agendadas de 12/11 e 13/11 concluídas com sucesso (aba Actions). A execução agendada de 11/11 falhou, provavelmente porque os secrets ainda não estavam configurados (inferência: o log não foi analisado); a coleta da ASC só começou em 12/11. **Lacuna (14/11/2026):** o professor trocou o endpoint do RustFS e revogou as credenciais antigas; os brutos de 12/11 e 13/11 ficaram no servidor antigo e não foram migrados. Após atualizar os secrets (`S3_ENDPOINT_URL`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`), a execução manual de 14/11 gravou raw, silver, gold e `gold_turma` da ASC no lake novo. A série passa a começar em 14/11/2026 e a lacuna de dois dias é permanente (ADR-002).
 - **Qualidade.** Primeira carga da ASC: 620 produtos, 658 linhas de preço, **0 registros na quarentena**; câmbio com 4 dias úteis e CDI com 7 dias.
 - **R2 (formato real da fonte).** O parser do TCGCSV leu a resposta real sem ajustes. O parser da PTAX tinha um defeito: o BCB publica `Fechamento PTAX`, não `Fechamento`, e nenhum dia de câmbio entrava. Corrigido (ADR-003, nota) e coberto por teste.
 - **Heurísticas de classificação (validadas em 14/11).** Raridades reais conferidas (ADR-004, nota). Defeito encontrado e corrigido: as 5 Code Cards da ASC eram classificadas como selado e distorceriam a pergunta 2 e a escolha do selado; coberto por testes.
@@ -57,7 +58,7 @@
 
 **A completar até 12/12 com a série final**
 
-- Dias coletados e lacunas (se houver):
+- Dias coletados e lacunas (lacuna já conhecida: 12/11 e 13/11, por troca do endpoint do lake; confirmar se surgiu outra):
 - Coleção que mais valorizou na turma (P3):
 - Selado × cartas na minha coleção (P2):
 - Cartas com melhor retorno por risco (P5):

@@ -6,6 +6,7 @@ O comando `demo` recusa rodar com POKELAKE_BACKEND=s3.
 from __future__ import annotations
 
 import json
+from urllib.parse import quote
 from datetime import date, timedelta
 
 import numpy as np
@@ -13,6 +14,15 @@ import numpy as np
 from pokelake.config import Settings
 from pokelake.keys import raw_key
 from pokelake.storage import BaseLake
+
+# Imagem de demonstração embutida (SVG): funciona sem internet e nunca parece uma carta real.
+DEMO_IMG = "data:image/svg+xml;utf8," + quote(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="245" height="342" viewBox="0 0 245 342">'
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B4CCA"/>'
+    '<stop offset="1" stop-color="#7B3FE4"/></linearGradient></defs><rect width="245" height="342" rx="14" fill="url(#g)"/>'
+    '<circle cx="122" cy="150" r="52" fill="#FFCB05" opacity=".9"/><text x="122" y="290" font-size="26" font-family="sans-serif" '
+    'font-weight="700" fill="#fff" text-anchor="middle">DEMO</text></svg>'
+)
 
 RARIDADES = ["Common"] * 12 + ["Uncommon"] * 10 + ["Rare"] * 6 + ["Double Rare"] * 5 + [
     "Illustration Rare"] * 3 + ["Ultra Rare"] * 2 + ["Special Illustration Rare"] * 3 + ["Hyper Rare"] * 1
@@ -31,13 +41,13 @@ def _gera_colecao(lake: BaseLake, gid: int, dias: list[date], seed: int) -> None
         mult = {"Common": 0.15, "Uncommon": 0.3, "Rare": 0.8, "Double Rare": 2, "Illustration Rare": 12,
                 "Ultra Rare": 8, "Special Illustration Rare": 60, "Hyper Rare": 25}[rar]
         base[(pid, "Holofoil" if rar not in ("Common", "Uncommon") else "Normal")] = mult * rng.uniform(0.6, 1.6)
-        produtos.append({"productId": pid, "name": f"DEMO Carta {i:03d}", "imageUrl": "https://placehold.co/245x342?text=DEMO",
+        produtos.append({"productId": pid, "name": f"DEMO Carta {i:03d}", "imageUrl": DEMO_IMG,
                          "url": "https://example.com/demo", "extendedData": [
                              {"name": "Rarity", "value": rar}, {"name": "Number", "value": f"{i + 1:03d}/100"}]})
     for j, nome in enumerate(["DEMO Booster Box", "DEMO Booster Box Case", "DEMO Elite Trainer Box", "DEMO Booster Bundle"]):
         pid = pid0 + 500 + j
         base[(pid, "Normal")] = [130, 780, 55, 28][j] * rng.uniform(0.9, 1.1)
-        produtos.append({"productId": pid, "name": nome, "imageUrl": "https://placehold.co/245x342?text=DEMO",
+        produtos.append({"productId": pid, "name": nome, "imageUrl": DEMO_IMG,
                          "url": "https://example.com/demo", "extendedData": []})
     prod_body = json.dumps({"success": True, "errors": [], "results": produtos}).encode()
     preco = dict(base)
