@@ -13,7 +13,7 @@
 | Q5 | Interoperabilidade | Colega grava um tipo diferente | `TRY_CAST` no staging + `union_by_name` | `gold.py` |
 | Q6 | Correção financeira | Fim de semana/feriado sem PTAX | `ASOF JOIN`, nunca cotação futura | `test_nunca_usa_cotacao_posterior` |
 | Q7 | Correção financeira | Futuro vazando na carteira | Composição só com o 1º dia | `test_composicao_nao_usa_informacao_do_futuro` |
-| Q8 | Disponibilidade | Agendador do GitHub atrasa horas | Duas janelas e coleta idempotente (ADR-008) | Aba Actions: execuções de 12/11 e 13/11 concluídas |
+| Q8 | Disponibilidade | Agendador do GitHub atrasa horas | Duas janelas e coleta idempotente (ADR-008) | Aba Actions: execuções de 12/11 a 15/11 e 17/11 concluídas; falha real em 16/11 (ADR-008, revisão 1) |
 
 ## Pontos de sensibilidade
 
@@ -41,7 +41,7 @@
 | R4 | Série curta (~7 semanas) | Linguagem descritiva, sem previsão |
 | R5 | Cartas caras compram 0 unidades na `cesta_raras` | Documentado no ADR-006 |
 | R7 | Troca de infraestrutura da turma (endpoint e credenciais do lake) durante a coleta | Configuração só por variáveis/secrets, sem endpoint fixo no código; lacuna declarada no README |
-| R6 | Atraso do agendador empurra a coleta para depois da meia-noite | ADR-008 (duas janelas; a trava de frescor impede gravar dado do dia errado) |
+| R6 | Atraso do agendador empurra a coleta para depois da meia-noite | **Materializado em 16/11/2026** (atraso de 6h a 6h30; dia perdido). ADR-008, revisão 1: seis janelas e coleta manual como reserva; a trava de frescor impediu gravar dado do dia errado |
 
 ## Resultados observados
 
@@ -58,7 +58,7 @@
 
 **A completar até 12/12 com a série final**
 
-- Dias coletados e lacunas (lacuna já conhecida: 12/11 e 13/11, por troca do endpoint do lake; confirmar se surgiu outra):
+- Dias coletados e lacunas (lacunas já conhecidas: 12/11 e 13/11, por troca do endpoint do lake; 16/11, por atraso do agendador; confirmar se surgiram outras):
 - Coleção que mais valorizou na turma (P3):
 - Selado × cartas na minha coleção (P2):
 - Cartas com melhor retorno por risco (P5):

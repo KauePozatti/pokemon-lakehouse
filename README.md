@@ -9,7 +9,7 @@ desafio da carteira de R$ 1.000 contra dólar e CDI.
 - **Aluno:** Kauê Douglas
 - **Coleção escolhida:** ASC — ME: Ascended Heroes (group_id 24541)
 - **Primeiro dia de coleta (no lake atual):** 14/11/2026 (a coleta começou em 12/11/2026 no endpoint antigo do lake; ver lacunas)
-- **Dias sem coleta (lacunas):** 12/11/2026 e 13/11/2026. A coleta desses dias foi gravada no endpoint antigo do data lake (`s3.afonsolelis.tech`), que o professor substituiu em 14/11/2026; as credenciais antigas foram revogadas e os objetos não foram migrados. A série da ASC no lake atual começa em 14/11/2026. Nada foi inventado nem reconstruído para preencher o intervalo.
+- **Dias sem coleta (lacunas):** 12/11/2026, 13/11/2026 e 16/11/2026. O dia 16/11 foi perdido porque o agendador do GitHub atrasou as duas execuções em 6h a 6h30 e elas começaram já em 17/11; a trava de frescor abortou sem gravar (ADR-008, revisão 1). Os dias 12/11 e 13/11: A coleta desses dias foi gravada no endpoint antigo do data lake (`s3.afonsolelis.tech`), que o professor substituiu em 14/11/2026; as credenciais antigas foram revogadas e os objetos não foram migrados. A série da ASC no lake atual começa em 14/11/2026. Nada foi inventado nem reconstruído para preencher o intervalo.
 
 ## Arquitetura
 
